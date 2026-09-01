@@ -1,0 +1,3 @@
+agent_workdir/build/
+agent_workdir/*.so
+agent_workdir/**/__pycache__/
