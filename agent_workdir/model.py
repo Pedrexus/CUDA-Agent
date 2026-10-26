@@ -7,7 +7,6 @@ import torch.nn.functional as F
 
 
 class Model(nn.Module):
-
     def __init__(self, alpha: float) -> None:
         super().__init__()
         self.alpha = alpha

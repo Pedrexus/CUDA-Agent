@@ -9,27 +9,29 @@ import torch.utils.cpp_extension as cpp_ext
 
 
 def find_sources() -> list[str]:
-    root = Path('.')
-    kernels_dir = Path('kernels')
+    root = Path(".")
+    kernels_dir = Path("kernels")
 
-    root_sources = [str(p) for p in root.glob('*.cu')] + [str(p) for p in root.glob('*.cpp')]
+    root_sources = [str(p) for p in root.glob("*.cu")] + [str(p) for p in root.glob("*.cpp")]
     kernel_sources = []
     if kernels_dir.is_dir():
-        kernel_sources = [str(p) for p in kernels_dir.glob('*.cu')] + [str(p) for p in kernels_dir.glob('*.cpp')]
+        kernel_sources = [str(p) for p in kernels_dir.glob("*.cu")] + [
+            str(p) for p in kernels_dir.glob("*.cpp")
+        ]
 
     return sorted(set(root_sources + kernel_sources))
 
 
 def compile_kernels() -> int:
-    build_dir = Path('build/forced_compile')
-    output_so = Path('cuda_extension.so')
+    build_dir = Path("build/forced_compile")
+    output_so = Path("cuda_extension.so")
     sources = find_sources()
 
     if not sources:
-        print('Error: no source files found (*.cu, *.cpp in root or kernels/)')
+        print("Error: no source files found (*.cu, *.cpp in root or kernels/)")
         return 1
 
-    print(f'Compiling {len(sources)} files: {", ".join(sources)}')
+    print(f"Compiling {len(sources)} files: {', '.join(sources)}")
 
     if build_dir.exists():
         shutil.rmtree(build_dir)
@@ -40,26 +42,26 @@ def compile_kernels() -> int:
 
     try:
         cpp_ext.load(
-            name='cuda_extension',
+            name="cuda_extension",
             sources=sources,
             build_directory=str(build_dir),
             verbose=False,
             with_cuda=True,
-            extra_cflags=['-O3', '-std=c++17'],
-            extra_cuda_cflags=['-O3', '--use_fast_math'],
+            extra_cflags=["-O3", "-std=c++17"],
+            extra_cuda_cflags=["-O3", "--use_fast_math"],
         )
     except Exception as exc:
-        print('Compilation failed.')
+        print("Compilation failed.")
         print(str(exc))
         return 1
 
-    built_so = build_dir / 'cuda_extension.so'
+    built_so = build_dir / "cuda_extension.so"
     if built_so.exists():
         shutil.copy2(built_so, output_so)
-        print(f'Compile success: {output_so}')
+        print(f"Compile success: {output_so}")
         return 0
 
-    print('Compilation finished but cuda_extension.so was not generated.')
+    print("Compilation finished but cuda_extension.so was not generated.")
     return 1
 
 
@@ -67,5 +69,5 @@ def main() -> int:
     return compile_kernels()
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

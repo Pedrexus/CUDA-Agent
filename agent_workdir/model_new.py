@@ -4,7 +4,6 @@ import cuda_extension
 
 
 class ModelNew(nn.Module):
-
     def __init__(self, alpha: float) -> None:
         super().__init__()
         self.alpha = alpha

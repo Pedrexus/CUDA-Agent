@@ -67,10 +67,7 @@ def benchmark_model(model, inputs, warmup_iters, run_iters):
                 _ = model(*inputs)
             torch.cuda.synchronize()
 
-    return (
-        sum(e.device_time for e in ctx.events() if e.device_type.name == "CUDA")
-        / run_iters
-    )
+    return sum(e.device_time for e in ctx.events() if e.device_type.name == "CUDA") / run_iters
 
 
 def print_results(torch_time, compile_time, cuda_time):
@@ -111,9 +108,7 @@ def main():
 
     cuda_time = benchmark_model(cuda_model, cuda_inputs, warmup_iters, run_iters)
     torch_time = benchmark_model(torch_model, torch_inputs, warmup_iters, run_iters)
-    compile_time = benchmark_model(
-        torch_compile_model, torch_inputs, warmup_iters, run_iters
-    )
+    compile_time = benchmark_model(torch_compile_model, torch_inputs, warmup_iters, run_iters)
     print_results(torch_time, compile_time, cuda_time)
 
 
